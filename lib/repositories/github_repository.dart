@@ -1,4 +1,5 @@
 import 'package:flutterkaigi/graphql/query.dart';
+import 'package:flutterkaigi/model/issu.dart';
 import 'package:flutterkaigi/model/repository.dart';
 import 'package:flutterkaigi/plugin/graphql_client.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -16,4 +17,17 @@ Future<List<Repository>?> fetchRepositories() async {
   return repositoryList;
 }
 
+Future<List<Issue>?> fetchIssues() async {
+  var response = await client.query(
+    QueryOptions(
+      document: gql(issuesQuery),
+    ),
+  );
+
+  final List<dynamic>? results =
+  response.data?['repository']?['issues']?['nodes'];
+  final List<Issue> issueList =
+  results!.map((dynamic item) => Issue.fromJson(item)).toList();
+  return issueList;
+}
 

@@ -14,3 +14,25 @@ String repositoriesQuery = """
   }
 """;
 
+String issuesQuery = """
+  query {
+    repository(name: "_graphql_handson", owner: "FlutterKaigi") {
+      description
+      createdAt
+      name
+      issues(
+        states: OPEN
+        first: 100
+        orderBy: { field: CREATED_AT, direction: DESC }
+      ) {
+        nodes {
+          id
+          body
+          updatedAt
+          title
+          url
+        }
+      }
+    }
+  }
+""";

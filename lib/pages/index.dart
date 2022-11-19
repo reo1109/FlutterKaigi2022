@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterkaigi/model/repository.dart';
+import 'package:flutterkaigi/model/issu.dart';
 import 'package:flutterkaigi/repositories/github_repository.dart';
 
 class IssueListPage extends StatelessWidget {
@@ -7,49 +7,45 @@ class IssueListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Center(
       child: FutureBuilder<dynamic>(
-          future: fetchRepositories(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.active:
-              case ConnectionState.waiting:
-                return const Text('Loading');
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error : ${snapshot.error}'));
-                }
+        future: fetchIssues(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return const Text('Loading');
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return Center(child: Text('Error : ${snapshot.error}'));
+              }
 
-                if (snapshot.data == null) {
-                  return const Text('No repositories');
-                }
+              if (snapshot.data == null) {
+                return const Text('No issues');
+              }
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    final Repository repository = snapshot.data[index];
-                    return Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: CardItem(
-                        title: repository.name,
-                        message: repository.description ?? '',
-                        url: repository.url,
-                        updatedAt: repository.updatedAt,
-                      ),
-                    );
-                  },
-                );
-            }
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  final Issue issue = snapshot.data[index];
+                  return CardItem(
+                    id: issue.id,
+                    title: issue.title,
+                    message: issue.body ?? '',
+                    url: issue.url,
+                    updatedAt: issue.updatedAt,
+                  );
+                },
+              );
           }
+        },
       ),
     );
-
-
   }
 }
+
 
 class CardItem extends StatelessWidget {
   const CardItem({
